@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dfbz.dao.StudentDao">
+    <sql id="Base_Column_List">
+    stu_id, stu_name, stu_age, stu_password
+    </sql>
+
+    <!--开启二级缓存-->
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+
+    <select id="findAll" resultMap="studentDetail">
+        select * from `mybatis`.`tb_student` s left join tb_result r on s.stu_id = r.stu_id
+    </select>
+
+    <resultMap id="studentDetail" type="Student" autoMapping="true">
+        <id property="stuId" column="stu_id"/>
+        <collection property="tbResults" javaType="list" ofType="TbResult" autoMapping="true" fetchType="lazy">
+            <id property="resId" column="res_id"/>
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultType="Student">
+        select stu_id, stu_name, stu_age, stu_password from tb_student where stu_id = #{stuId}
+    </select>
+    <!--<insert id="batchInsert">
+        INSERT INTO `mybatis`.`tb_student`( `stu_name`, `stu_age`, `stu_password`)
+        VALUES
+        <foreach collection="list" item="stu" separator=", ">
+            (#{stu.stuName}, #{stu.stuAge}, #{stu.stuPassword})
+        </foreach>
+    </insert>-->
+
+    <!--<delete id="deleteByIds">
+        delete from `mybatis`.`tb_student`
+        <where>
+            <foreach collection="array" separator=" or " item="item">
+                stu_id = #{item}
+            </foreach>
+        </where>
+    </delete>-->
+
+    <!--<update id="updateByNotnull">
+        update `mybatis`.`tb_student`
+        <set>
+            <if test="stuName!=null">
+                stu_name = #{stuName},
+            </if>
+            <if test="stuAge!=null">
+                stu_age = #{stuAge},
+            </if>
+            <if test="stuPassword!=null">
+                stu_password = #{stuPassword},
+            </if>
+        </set>
+        where stu_id = #{stuId}
+    </update>-->
+
+    <!--<select id="findByCondition" resultType="com.dfbz.entity.Student">
+        select stu_id, stu_name, stu_age, stu_password from `mybatis`.`tb_student`
+        <where>
+            <if test="stuId!=null">
+                and stu_id = #{stuId}
+            </if>
+            <if test="stuName!=null">
+                and stu_name like concat('%',#{stuName},'%')
+            </if>
+            <if test="stuAge!=null">
+                and stu_age like concat('%',#{stuAge},'%')
+            </if>
+        </where>
+    </select>-->
+</mapper>
